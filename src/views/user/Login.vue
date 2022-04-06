@@ -28,6 +28,7 @@
 import { Field, Icon, Button } from 'vant'
 import { mapActions } from 'vuex'
 import VerifyCodeBtn from '@/components/VerifyCodeBtn'
+import { login } from '@/api/user'
 export default {
   name: 'Login',
   data () {
@@ -54,18 +55,32 @@ export default {
       this.password = this.code = ''
       this.loginWay = this.loginWay === 'password' ? 'verifyCode' : 'password'
     },
-    handleLogin () {
-      const data = {
-        phoneNumber: this.phoneNumber,
-        password: this.password,
-        $router: this.$router,
-        $route: this.$route
-      }
-      this.login(data)
+    async handleLogin () {
+        console.log('222')
+
+      // const data = {
+      //   phoneNumber: this.phoneNumber,
+      //   password: this.password,
+      //   $router: this.$router,
+      //   $route: this.$route
+      // }
+      // let res = await login({username: this.phoneNumber,
+      //   password: this.password})
+      //   console.log(res)
+      login({username: this.phoneNumber,
+        password: this.password}).then(r => {
+
+        sessionStorage.setItem("uid",r.data.uid)
+        this.$router.push({ path:  '/' })
+      })
+      .catch(() => {});
+      // this.$router.push({ path: '/article1' })
+      // this.login(data)
+      // sessionStorage.getItem("uid")
     },
-    ...mapActions({
-      login: 'user/login'
-    })
+    // ...mapActions({
+    //   login: 'user/login'
+    // })
   },
   computed: {
     loginWayObj: function () {

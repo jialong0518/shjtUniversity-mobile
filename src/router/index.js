@@ -74,6 +74,7 @@ let historyCount = history.getItem('count') * 1 || 0
 history.setItem('/', 0)
 
 myRouter.beforeEach((to, from, next) => {
+  console.log(to)
   if (to.params.direction) {
     store.commit('updateDirection', to.params.direction)
   } else {

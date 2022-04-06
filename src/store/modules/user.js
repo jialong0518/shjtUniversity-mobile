@@ -43,6 +43,9 @@ export default {
           phoneNumber: data.phoneNumber,
           password: data.password
         })
+        if(res.code === 1){}
+        console.log(11111)
+        console.log(res)
         state.commit(LOGIN, res)
         Toast({
           message: '登录成功',

@@ -53,17 +53,25 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:${port}/mock`,
-        changeOrigin: true,
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
-        }
-      }
-    },
+    // proxy: {
+    //   // change xxx-api/login => mock/login
+    //   // detail: https://cli.vuejs.org/config/#devserver-proxy
+    //   [process.env.VUE_APP_BASE_API]: {
+    //     target: `http://127.0.0.1:${port}/mock`,
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       ['^' + process.env.VUE_APP_BASE_API]: ''
+    //     }
+    //   }
+    // },
+    proxy: {  //配置跨域
+      　　　　　　　　'/expert': {
+      　　　　　　　　　　target: 'http://mob.hexntc.com/expert',  //这里后台的地址模拟的;应该填写你们真实的后台接口
+      　　　　　　　　　　pathRewrite: {
+      　　　　　　　　　　　　'^/expert': ''  //请求的时候使用这个api就可以
+      　　　　　　　　　　}
+      　　　　　　}
+      　　　　},
     after: require('./mock/mock-server.js')
   },
   configureWebpack: smp.wrap({
