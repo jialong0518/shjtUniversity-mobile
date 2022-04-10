@@ -1,73 +1,68 @@
 <template>
   <div class="container">
-    <div class="banner">
-      <van-swipe :autoplay="3000">
-        <van-swipe-item v-for="(image, index) in images"
-                        :key="index">
-          <img v-lazy="image" />
-        </van-swipe-item>
-      </van-swipe>
+    <h1>上海交通大学专家管理系统</h1>
+    <div>
+      <div style="margin:5px 0 15px;">
+       <van-cell-group inset>
+        <van-cell title="年份" value="2022" />
+        <van-cell title="院/系" value="医学院" />
+        <van-cell title="学科" value="医科"  />
+        <van-cell title="名称" value="2022招生面试"  />
+        <van-cell title="场次" value="2"  />
+        <van-cell title="面试时间段" label="2022-02-28 00:00:00-2022-02-28 00:00:00" />
+        <div class="operate">
+          <span>未确认</span>
+          <van-button type="info">点击确认</van-button>
+        </div>
+      </van-cell-group>
+     </div>
+     <div style="margin:5px 0 15px;">
+       <van-cell-group inset>
+          <van-cell title="年份" value="2022" />
+          <van-cell title="院/系" value="医学院" />
+          <van-cell title="学科" value="医科"  />
+          <van-cell title="名称" value="2022招生面试"  />
+          <van-cell title="场次" value="2"  />
+          <van-cell title="面试时间段" label="2022-02-28 00:00:00-2022-02-28 00:00:00" />
+          <div class="operate">
+            <span>未确认</span>
+            <van-button type="info">点击确认</van-button>
+          </div>
+        </van-cell-group>
+     </div>
+     <div style="margin:5px 0 15px;">
+       <van-cell-group inset>
+          <van-cell title="年份" value="2022" />
+          <van-cell title="院/系" value="医学院" />
+          <van-cell title="学科" value="医科"  />
+          <van-cell title="名称" value="2022招生面试"  />
+          <van-cell title="场次" value="2"  />
+          <van-cell title="面试时间段" label="2022-02-28 00:00:00-2022-02-28 00:00:00" />
+          <div class="operate">
+            <span>未确认</span>
+            <van-button type="info">点击确认</van-button>
+          </div>
+        </van-cell-group>
+     </div>
     </div>
-    <div class="now-value">
-      <span>当前数值{{$store.state.test.number}}</span>
-      <div>
-        <van-button type="info"
-                    @click="add"
-                    :loading="loading"
-                    size="small">异步+1</van-button>
-        <van-button type="primary"
-                    size="small"
-                    @click="addOne">+1</van-button>
-      </div>
-    </div>
-    <div class="icon-list">
-      <svg-icon v-for="icon in iconList"
-                :key="icon"
-                class="icon"
-                :icon-class="icon" />
-    </div>
-    <div class="buttons">
-      <van-button type="warning"
-                  @click="logout">退出登录</van-button>
-      <div @click="go">
-        <svg-icon icon-class="404" />前往404页面</div>
-    </div>
-    <img :src="img">
-    <footer-tabbar />
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
-// const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 
+import { getmatchinfolist } from '@/api/user'
+// const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
   data () {
     return {
       img,
       value: 1,
-      images: [
-        'https://img.yzcdn.cn/vant/apple-1.jpg',
-        'https://img.yzcdn.cn/vant/apple-2.jpg'
-      ],
-      iconList: [
-        'dashboard',
-        'example',
-        'eye-open',
-        'eye',
-        'form',
-        'link',
-        'nested',
-        'password',
-        'table',
-        'tree',
-        'user',
-        '404'
-      ]
+     
     }
   },
   components: {
@@ -76,35 +71,46 @@ export default {
     [TabbarItem.name]: TabbarItem,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    FooterTabbar
+    FooterTabbar,
+    'van-cell-group': CellGroup,
+    'van-cell': Cell
   },
   computed: {
-    ...mapState({
-      loading: state => state['@@loading'].effects['test/onePlusAsync']
-    })
+    
   },
   methods: {
-    add () {
-      this.onePlusAsync(this.value)
+    getTableData () {
+      getmatchinfolist({
+        
+      }).then(r => {
+          console.log(r)
+        // sessionStorage.setItem("uid",r.data.uid)
+        // this.$router.push({ path:  '/' })
+      })
+      .catch(() => {});
     },
-    addOne () {
-      this.onePlus(1)
-    },
-    // ...mapActions('home', ['initData', 'plusPage', 'initPage']),
-    ...mapActions({
-      onePlusAsync: 'test/onePlusAsync'
-    }),
     go(){
       this.$router.push({ path: '/article1' })
     },
-    ...mapMutations({
-      onePlus: 'test/onePlus',
-      logout: 'user/LOGOUT'
-    })
+  },
+  mounted(){
+
   }
 }
 </script>
 <style lang="scss" scoped>
+h1 {
+  font-size: 24px;
+  text-align: center;
+}
+.operate{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  span {
+    font-size: 18px;
+  }
+}
 .container{
   height: auto;
   width: 100%;

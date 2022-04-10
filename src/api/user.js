@@ -8,6 +8,14 @@ export function login (data) {
   })
 }
 
+export function getmatchinfolist (data) {
+  return request({
+    url: '/expert/usermatchinfolist',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo (token) {
   return request({
     url: '/user/info',
