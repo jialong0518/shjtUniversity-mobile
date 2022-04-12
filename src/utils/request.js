@@ -14,6 +14,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
+    config.headers['uid'] = 1;
     if (store.getters.token) {
       config.headers['X-Token'] = getToken()
     }
