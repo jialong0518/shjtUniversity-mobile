@@ -20,8 +20,9 @@
               <van-cell title="场次" :value="item.roundName"  />
               <van-cell title="面试时间段" :label="`${item.auditionBegin}--${item.auditionEnd}`" />
               <div class="operate">
-                <span>未确认</span>
-                <van-button type="info">点击确认</van-button>
+                <span>{{item.status}}</span>
+                <van-button v-show="item.status === '未确认'" @click="confirmBut(item, '1')" type="info">点击确认</van-button>
+                <van-button v-show="item.status === '已确认'" @click="confirmBut(item, '0')" type="info">申请取消</van-button>
               </div>
             </van-cell-group>
           </div>
@@ -56,11 +57,34 @@
         </van-cell-group>
      </div> -->
     </div>
+    <van-dialog 
+      v-model="confirmShow" 
+      :title="state=== '1' ?'面试信息确认':'申请取消'" 
+      show-cancel-button
+      :confirmButtonText="state=== '1' ? '确定' : '提交'"  
+      :cancelButtonText="state=== '1' ? '拒绝' : '关闭'"   
+      confirmButtonColor="#000"
+      cancelButtonColor="red"
+      :before-close="onBeforeClose"
+      @confirm="confirmT"
+      @cancel="confirmF"
+    >
+      <van-cell-group style="margin-top: 30px;">
+        <van-cell title="年份" :value="dialogData.year" />
+        <van-cell title="名称" :value="dialogData.auditionName"  />
+        <van-cell title="场次" :value="dialogData.roundName"  />
+        <van-cell title="院/系" :value="dialogData.expertCollege" />
+        <van-cell title="学科" :value="dialogData.expertSubject"  />
+        <van-cell title="姓名" :value="dialogData.expertName"  />
+        <van-cell title="限定人数" :value="dialogData.countPlan"  />
+        <van-cell title="面试时间段" :label="`${dialogData.auditionBegin}--${dialogData.auditionEnd}`" />
+      </van-cell-group>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
@@ -78,6 +102,9 @@ export default {
       finished: false,
       page: 0,
       error: false,
+      confirmShow: false,
+      dialogData: {},
+      state:''
     }
   },
   components: {
@@ -89,12 +116,40 @@ export default {
     FooterTabbar,
     'van-cell-group': CellGroup,
     'van-cell': Cell,
-    'van-list': List
+    'van-list': List,
+    [Dialog.Component.name]: Dialog.Component,
   },
   computed: {
     
   },
   methods: {
+    onBeforeClose(a, done){
+      if(a === 'confirm') {
+        return done(false)
+      } else {
+        return done(false)
+      }
+    },
+    confirmT(){
+      if(this.state === '1'){
+        console.log('1')
+      } else {
+        console.log('11')
+      }
+    },
+    confirmF(){
+      if(this.state === '1'){
+        console.log('2')
+      } else {
+        console.log('22')
+      }
+    },
+    confirmBut(data, state) {
+      console.log(data)
+      this.dialogData = data;
+      this.state = state;
+      this.confirmShow = true;
+    },
     getTableData () {
       this.page ++
       getmatchinfolist({
