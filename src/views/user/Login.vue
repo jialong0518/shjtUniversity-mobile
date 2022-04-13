@@ -17,9 +17,12 @@
       <div class="button-wrap">
         <van-button size="large" @click="handleLogin" type="info">登录</van-button>
       </div>
+      <div class="button-wrap">
+        <van-button size="large" @click="goEmpower">上海交通大学统一身份认证</van-button>
+      </div>
       <div class="more-wrap">
-        <router-link class="link" to="/register">没有账号？去注册</router-link>
-        <div class="switch-way" @click="switchLoginWay">{{loginWayObj.toggleMsg}}</div>
+        <!-- <router-link class="link" to="/register">没有账号？去注册</router-link> -->
+        <!-- <div class="switch-way" @click="switchLoginWay">{{loginWayObj.toggleMsg}}</div> -->
       </div>
     </div>
   </div>
@@ -28,7 +31,7 @@
 import { Field, Icon, Button } from 'vant'
 import { mapActions } from 'vuex'
 import VerifyCodeBtn from '@/components/VerifyCodeBtn'
-import { login } from '@/api/user'
+import { login, goEmpower } from '@/api/user'
 export default {
   name: 'Login',
   data () {
@@ -42,6 +45,10 @@ export default {
     }
   },
   methods: {
+    goEmpower() {
+      // ?code=6118ae9a113d44f892bfd15b877adef8
+      window.location.href ='https://jaccount.sjtu.edu.cn/oauth2/authorize?response_type=code&scope=essential&client_id=HTjYQXuT3U1QqTp8h0ug&redirect_uri=https://mob.hexntc.com/expert/oauthlogin';
+    },
     sendVerifyCode () {
       this.phoneNumberError = ''
       if (!this.phoneNumber) { // 根据需求做判断
@@ -69,8 +76,12 @@ export default {
       //   console.log(res)
       login({username: this.phoneNumber,
         password: this.password}).then(r => {
-
+          if(r.code === 1) {
+            return
+          }
         sessionStorage.setItem("uid",r.data.uid)
+        sessionStorage.setItem("phone",r.data.phone)
+        sessionStorage.setItem("name",r.data.name)
         this.$router.push({ path:  '/' })
       })
       .catch(() => {});
@@ -78,9 +89,26 @@ export default {
       // this.login(data)
       // sessionStorage.getItem("uid")
     },
+    
     // ...mapActions({
     //   login: 'user/login'
     // })
+  },
+  mounted() {
+    console.log(this.$route.query.code)
+    if(this.$route.query.code){
+      goEmpower({code: this.$route.query.code})
+      .then(r => {
+        if(r.code === 1) {
+            return
+          }
+        sessionStorage.setItem("uid",r.data.uid)
+        sessionStorage.setItem("phone",r.data.phone)
+        sessionStorage.setItem("name",r.data.name)
+        this.$router.push({ path:  '/' })
+      })
+      .catch(() => {});
+    }
   },
   computed: {
     loginWayObj: function () {

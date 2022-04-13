@@ -21,8 +21,8 @@
               <van-cell title="面试时间段" :label="`${item.auditionBegin}--${item.auditionEnd}`" />
               <div class="operate">
                 <span>{{item.status}}</span>
-                <van-button v-show="item.status === '未确认'" @click="confirmBut(item, '1')" type="info">点击确认</van-button>
-                <van-button v-show="item.status === '已确认'" @click="confirmBut(item, '0')" type="info">申请取消</van-button>
+                <van-button v-show="item.status === '未确认'" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
+                <van-button v-show="item.status === '已确认'" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button>
               </div>
             </van-cell-group>
           </div>
@@ -89,7 +89,7 @@ import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHel
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
 
-import { getmatchinfolist } from '@/api/user'
+import { getmatchinfolist, expertconfirm } from '@/api/user'
 // const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
@@ -104,7 +104,8 @@ export default {
       error: false,
       confirmShow: false,
       dialogData: {},
-      state:''
+      state:'',
+      dialogDataIndex: ''
     }
   },
   components: {
@@ -123,6 +124,20 @@ export default {
     
   },
   methods: {
+    examineFun(stste) {
+      this.tableData[this.dialogDataIndex].status = stste;
+      this.confirmShow = false;
+      return
+      expertconfirm({
+        "ids": [this.dialogData.id],
+        "status": stste,
+        "fid": 1,
+        "memo": ""
+      }).then(r => {
+          console.log(r)
+      })
+      .catch(() => {});
+    },
     onBeforeClose(a, done){
       if(a === 'confirm') {
         return done(false)
@@ -132,21 +147,22 @@ export default {
     },
     confirmT(){
       if(this.state === '1'){
-        console.log('1')
+        this.examineFun('已确认')
       } else {
-        console.log('11')
+        this.examineFun('审核中')
       }
     },
     confirmF(){
       if(this.state === '1'){
-        console.log('2')
+        this.examineFun('已拒绝')
       } else {
-        console.log('22')
+        this.confirmShow = false;
       }
     },
-    confirmBut(data, state) {
+    confirmBut(data, state, index) {
       console.log(data)
       this.dialogData = data;
+      this.dialogDataIndex = index;
       this.state = state;
       this.confirmShow = true;
     },
@@ -163,6 +179,12 @@ export default {
         "pageSize": 10
       }).then(r => {
           console.log(r)
+          if(r.code !== 0) {
+            this.page --;
+            this.loading = false;
+            this.error = true;
+            return
+          }
           if(!r.data.list) {
             this.page --;
             this.loading = false;
@@ -187,7 +209,7 @@ export default {
     },
   },
   mounted(){
-    this.getTableData()
+    // this.getTableData()
   }
 }
 </script>

@@ -12,11 +12,8 @@ router.beforeEach(async (to, from, next) => {
 
   // determine whether the user has logged in
   // const hasToken = getToken()
-  console.log('111')
   const hasToken = sessionStorage.getItem("uid")
-  console.log(hasToken)
   if (hasToken) {
-    console.log(hasToken,'1')
     if (to.path === '/login') {
       // 已经登录，跳转到首页
       next({ path: '/' })
@@ -40,7 +37,6 @@ router.beforeEach(async (to, from, next) => {
       // }
     }
   } else {
-    console.log(hasToken,'2')
     /* has no token */
     if (whiteList.indexOf(to.path) !== -1) {
       // 白名单中，无需验证

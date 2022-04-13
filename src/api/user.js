@@ -2,7 +2,20 @@ import request from '@/utils/request'
 
 export function login (data) {
   return request({
-    url: '/expert/login',
+    url: '/expert/loginnormal',
+    method: 'post',
+    data: {
+      expertNo: data.username,
+      expertPwd: data.password,
+      type: '移动端'
+    }
+    // data: JSON.stringify(data)
+  })
+}
+
+export function expertconfirm (data) {
+  return request({
+    url: '/expert/expertconfirm',
     method: 'post',
     data
   })
@@ -13,6 +26,13 @@ export function getmatchinfolist (data) {
     url: '/expert/usermatchinfolist',
     method: 'post',
     data
+  })
+}
+
+export function goEmpower(data) {
+  return request({
+    url: `/expert/getlogininfo?code=${data.code}`,
+    method: 'get',
   })
 }
 
