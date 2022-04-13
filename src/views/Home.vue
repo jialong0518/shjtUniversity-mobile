@@ -78,13 +78,26 @@
         <van-cell title="姓名" :value="dialogData.expertName"  />
         <van-cell title="限定人数" :value="dialogData.countPlan"  />
         <van-cell title="面试时间段" :label="`${dialogData.auditionBegin}--${dialogData.auditionEnd}`" />
+        <van-cell v-show="dialogData.status === '已确认'">
+           <!-- value="" label="描述信息" -->
+          <template slot="title">
+          <van-field
+            v-model="msg"
+            rows="2"
+            autosize
+            label="取消原因"
+            type="textarea"
+            placeholder="请输入原因"
+          />
+          </template>
+        </van-cell>
       </van-cell-group>
     </van-dialog>
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
@@ -105,7 +118,8 @@ export default {
       confirmShow: false,
       dialogData: {},
       state:'',
-      dialogDataIndex: ''
+      dialogDataIndex: '',
+      msg: ''
     }
   },
   components: {
@@ -119,22 +133,33 @@ export default {
     'van-cell': Cell,
     'van-list': List,
     [Dialog.Component.name]: Dialog.Component,
+    'van-field': Field
   },
   computed: {
     
   },
   methods: {
     examineFun(stste) {
-      this.tableData[this.dialogDataIndex].status = stste;
-      this.confirmShow = false;
-      return
       expertconfirm({
         "ids": [this.dialogData.id],
         "status": stste,
-        "fid": 1,
-        "memo": ""
+        "fid": this.dialogData.fid,
+        "memo": this.msg
       }).then(r => {
           console.log(r)
+          if(r.code !== 0) {
+            retrun
+          }
+          this.tableData[this.dialogDataIndex].status = stste;
+          this.confirmShow = false;
+          if(stste === '已确认') {
+            Dialog.alert({
+              title: '提示',
+              message: r.msg,
+            }).then(() => {
+              // on close
+            });
+          }
       })
       .catch(() => {});
     },
@@ -161,6 +186,7 @@ export default {
     },
     confirmBut(data, state, index) {
       console.log(data)
+      this.msg = '';
       this.dialogData = data;
       this.dialogDataIndex = index;
       this.state = state;
