@@ -31,7 +31,7 @@ export function getmatchinfolist (data) {
 
 export function goEmpower(data) {
   return request({
-    url: `/expert/getlogininfo?code=${data.code}`,
+    url: `/expert/getlogininfomob?code=${data.code}`,
     method: 'get',
   })
 }

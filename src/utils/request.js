@@ -19,6 +19,9 @@ service.interceptors.request.use(
     if (store.getters.token) {
       config.headers['X-Token'] = getToken()
     }
+    if(sessionStorage.getItem("uid")) {
+      config.data['uid'] = Number(sessionStorage.getItem("uid"));
+    }
     return config
   },
   error => {
