@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <div class="logo">
-        <img src="http://img.cixi518.com/ljh_logo.jpeg" alt="default_logo">
-      </div>
+      <h1>上海交通大学专家管理系统</h1>
     </div>
     <div class="content">
       <van-field placeholder="手机号码" v-model="phoneNumber" left-icon="phone-o" :error-message="phoneNumberError" />
@@ -146,7 +144,7 @@ export default {
 <style lang="scss" scoped>
   .header{
     width: 100%;
-    height: 165px;
+    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
