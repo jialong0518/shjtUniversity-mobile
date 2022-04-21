@@ -8,7 +8,7 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const port = process.env.port || process.env.npm_config_port || 8888
 const cdnDomian = '/' // cdn域名，如果有cdn修改成对应的cdn
-const name = 'H5Vue' // page title
+const name = '上海交通大学专家管理系统' // page title
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const cdn = {
   css: [],

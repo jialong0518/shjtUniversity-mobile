@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'H5Vue',
+  title: '上海交通大学专家管理系统',
 
   /**
    * @type {boolean} true | false
