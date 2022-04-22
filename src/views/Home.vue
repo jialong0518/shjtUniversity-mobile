@@ -8,7 +8,7 @@
           :finished="finished"
           finished-text="没有更多了"
           :error.sync="error"
-          error-text="请求失败，点击重新加载"
+          error-text="暂无记录"
           @load="getTableData"
         >
           <div style="margin-top:10px;margin-bottom:10px;" :key="index" v-for="(item, index) in tableData">
