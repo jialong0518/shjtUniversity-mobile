@@ -4,7 +4,7 @@
       <h1>上海交通大学专家管理系统</h1>
     </div>
     <div class="content">
-      <van-field placeholder="手机号码" v-model="phoneNumber" left-icon="phone-o" :error-message="phoneNumberError" />
+      <van-field placeholder="学工号" v-model="phoneNumber" left-icon="phone-o" :error-message="phoneNumberError" />
       <!-- eye -->
       <van-field v-if="loginWay==='password'" placeholder="登录密码" v-model="password" left-icon="lock" :type="passwordType">
          <van-icon slot="right-icon" @click="switchPasswordType" :name="passwordIcon"/>
