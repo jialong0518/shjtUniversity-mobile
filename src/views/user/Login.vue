@@ -80,6 +80,7 @@ export default {
         sessionStorage.setItem("uid",r.data.uid)
         sessionStorage.setItem("phone",r.data.phone)
         sessionStorage.setItem("name",r.data.name)
+        sessionStorage.setItem("commitment",r.data.commitment)
         this.$router.push({ path:  '/' })
       })
       .catch(() => {});

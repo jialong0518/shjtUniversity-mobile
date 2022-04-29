@@ -93,16 +93,29 @@
         </van-cell>
       </van-cell-group>
     </van-dialog>
+    <van-overlay :show="commitmentSHow">
+      <div style="display: flex;align-items: center;justify-content: center;height: 100%;" @click.stop>
+        <div style="width: 90%;height: 90%;background-color: #fff;border-radius: 5px;display: flex;flex-direction: column;align-items: center;">
+        <div style="font-size: 20px;margin-top: 10px;margin-bottom: 10px;">阅读须知</div>
+        <div style="flex: 1;width: 90%;font-size: 16px;word-wrap: break-word;">
+          fwefawfawfawfawfawfawfawfawfawfawfawfawfawfawfawfwaf
+        </div>
+        <div style="margin-bottom: 20px;margin-top: 10px;">
+          <van-button type="info" @click="confirmRead" :disabled="countDown !== 0" ><span v-show="countDown !== 0">（{{countDown}}）</span>已阅读</van-button>
+        </div>
+        </div>
+      </div>
+    </van-overlay>
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field, Overlay } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
 
-import { getmatchinfolist, expertconfirm } from '@/api/user'
+import { getmatchinfolist, expertconfirm, expertcommitment } from '@/api/user'
 // const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
@@ -119,7 +132,10 @@ export default {
       dialogData: {},
       state:'',
       dialogDataIndex: '',
-      msg: ''
+      msg: '',
+      commitment:'',
+      commitmentSHow: false,
+      countDown: 1,
     }
   },
   components: {
@@ -133,12 +149,26 @@ export default {
     'van-cell': Cell,
     'van-list': List,
     [Dialog.Component.name]: Dialog.Component,
-    'van-field': Field
+    'van-field': Field,
+    'van-overlay': Overlay
   },
   computed: {
     
   },
   methods: {
+    confirmRead(){
+      expertcommitment({
+        "id": Number(sessionStorage.getItem("uid")),
+        "commitment": 1,
+      }).then(r => {
+          console.log(r)
+          if(r.code !== 0) {
+            retrun
+          }
+          this.commitmentSHow = false;
+      })
+      .catch(() => {});
+    },
     examineFun(stste) {
       expertconfirm({
         "ids": [this.dialogData.id],
@@ -235,6 +265,22 @@ export default {
     },
   },
   mounted(){
+    console.log(sessionStorage.getItem("commitment"))
+    this.commitment = sessionStorage.getItem("commitment")
+    this.commitmentSHow = this.commitment === '0' ? true : false;
+    if(this.commitment === '0') {
+      let countDownFun=()=>{
+         let time =  setTimeout(()=>{
+          this.countDown = this.countDown - 1;
+          if(this.countDown !== 0) {
+            countDownFun(this.countDown)
+          } else {
+            clearTimeout(time)
+          }
+         },1000)
+      }
+         countDownFun()
+    }
     // this.getTableData()
   }
 }
