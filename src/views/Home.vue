@@ -159,7 +159,7 @@ export default {
     confirmRead(){
       expertcommitment({
         "id": Number(sessionStorage.getItem("uid")),
-        "commitment": 1,
+        "commitment": '1',
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
