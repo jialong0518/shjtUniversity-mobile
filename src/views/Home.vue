@@ -93,24 +93,41 @@
         </van-cell>
       </van-cell-group>
     </van-dialog>
-    <van-overlay :show="commitmentSHow">
+    <div style="position: relative;">
+      <van-overlay :show="commitmentSHow">
       <div style="display: flex;align-items: center;justify-content: center;height: 100%;" @click.stop>
         <div style="width: 90%;height: 90%;background-color: #fff;border-radius: 5px;display: flex;flex-direction: column;align-items: center;">
-        <div style="font-size: 20px;margin-top: 10px;margin-bottom: 10px;">阅读须知</div>
-        <div style="flex: 1;width: 90%;font-size: 16px;word-wrap: break-word;">
-          fwefawfawfawfawfawfawfawfawfawfawfawfawfawfawfawfwaf
+        <h1 style="margin-top: 10px;margin-bottom: 10px;padding: 0 10px;">上海交通大学招生选拔工作面试专家承诺书</h1>
+        <div class="noticeDiv" style="flex: 1;width: 90%;font-size: 16px;word-wrap: break-word;overflow: scroll;">
+          <p>一、本人将自觉遵守国家、地方相关法律法规及学校规定，参与上海交通大学招生选拔工作。</p>
+          <p>二、本人近三年内不存在违纪违法行为，未受到过任何组织处理、处分或处罚；无师德师风问题。</p>
+          <p>三、本人承诺与报考上海交通大学当年本科招生专业的考生不存在亲属关系、指导关系及其他利害关系，不存在需要回避的情形。</p>
+          <p>四、不私下会见考生及其亲友，不接受现金、有价证券、礼品、宴请等，不向考生及其亲友许愿承诺。</p>
+          <p>五、不组织、不参与任何形式的与招生选拔有关的考前辅导、应试培训等活动，不组织、不参与任何形式的与招生选拔有关的复习资料编写、出版等活动。</p>
+          <p>六、不在通讯设备中谈论招生选拔工作相关信息，不通过互联网传送招生选拔工作相关资料，不在联接到互联网的计算机等设备中处理招生选拔工作相关材料。</p>
+          <p>七、本人将严格掌握测评标准，遵守独立评分原则，不错评、漏评，不相互讨论，按时完成任务。</p>
+          <p>八、不私自携带手机等电子通讯工具进入选拔现场（含居家面试）。不在选拔现场及相关工作场所违反规定随意窜岗，工作期间不与外界进行与选拔内容有关的任何联系，自觉维护工作秩序。</p>
+          <p>九、不私自留存招生选拔工作发放的各项资料，不将考生、评委专家及工作人员信息、组成情况、工作安排、选拔程序及内容等以任何形式对外透露，并防止泄露。</p>
+          <p>十、未经学校授权，不将本人参与选拔的工作身份以任何形式对外透露，并防止泄露。未经学校授权，本人不接受媒体的采访或向媒体提供信息。</p>
+          <p>十一、未经学校许可，不将选拔成绩及录取结果以任何形式对外透露，并防止泄露。</p>
+          <p>十二、不将招生选拔其他需要保密的内容以任何形式对外透露，并防止泄露。</p>
+          <p>十三、坚决维护招生考试安全，并对本人职责范围内的考试安全工作负责。</p>
+          <p>十四、本人将按时参加招生选拔相关工作培训，并严格执行相关工作要求。</p>
+          <p>十五、本人不存在其他影响招生选拔评判的情形。</p>
+          <div><van-radio style='display: inline-block;position: relative;top: 6px;margin-right: 10px;' v-model="radio" :name="true"></van-radio>在学习国家教育考试的有关保密规定和国家有关涉密法律法规后，本人已经阅读并知晓上述内容，愿意承担不遵守以上承诺所引起的一切后果！</div>
         </div>
         <div style="margin-bottom: 20px;margin-top: 10px;">
-          <van-button type="info" @click="confirmRead" :disabled="countDown !== 0" ><span v-show="countDown !== 0">（{{countDown}}）</span>已阅读</van-button>
+          <van-button type="info" @click="confirmRead" :disabled="!radio" >确 认</van-button>
         </div>
         </div>
       </div>
     </van-overlay>
+    </div>
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field, Overlay } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field, Overlay, RadioGroup, Radio } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
@@ -136,6 +153,7 @@ export default {
       commitment:'',
       commitmentSHow: false,
       countDown: 1,
+      radio: false
     }
   },
   components: {
@@ -150,7 +168,8 @@ export default {
     'van-list': List,
     [Dialog.Component.name]: Dialog.Component,
     'van-field': Field,
-    'van-overlay': Overlay
+    'van-overlay': Overlay,
+    'van-radio': Radio
   },
   computed: {
     
@@ -268,19 +287,20 @@ export default {
     console.log(sessionStorage.getItem("commitment"))
     this.commitment = sessionStorage.getItem("commitment")
     this.commitmentSHow = this.commitment === '0' ? true : false;
-    if(this.commitment === '0') {
-      let countDownFun=()=>{
-         let time =  setTimeout(()=>{
-          this.countDown = this.countDown - 1;
-          if(this.countDown !== 0) {
-            countDownFun(this.countDown)
-          } else {
-            clearTimeout(time)
-          }
-         },1000)
-      }
-         countDownFun()
-    }
+    // this.commitmentSHow =  true
+    // if(this.commitment === '0') {
+    //   let countDownFun=()=>{
+    //      let time =  setTimeout(()=>{
+    //       this.countDown = this.countDown - 1;
+    //       if(this.countDown !== 0) {
+    //         countDownFun(this.countDown)
+    //       } else {
+    //         clearTimeout(time)
+    //       }
+    //      },1000)
+    //   }
+    //      countDownFun()
+    // }
     // this.getTableData()
   }
 }
@@ -339,5 +359,9 @@ h1 {
   a {
     color: #333;
   }
+}
+.noticeDiv p {
+  text-indent: 36px;
+  font-size: 18px;
 }
 </style>
