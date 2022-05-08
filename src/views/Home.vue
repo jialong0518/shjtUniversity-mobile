@@ -94,7 +94,7 @@
       </van-cell-group>
     </van-dialog>
     <div style="position: relative;">
-      <van-overlay :show="commitmentSHow">
+      <van-overlay :show="commitmentSHow"  :lock-scroll="false">
       <div style="display: flex;align-items: center;justify-content: center;height: 100%;" @click.stop>
         <div style="width: 90%;height: 90%;background-color: #fff;border-radius: 5px;display: flex;flex-direction: column;align-items: center;">
         <h1 style="margin-top: 10px;margin-bottom: 10px;padding: 0 10px;">上海交通大学招生选拔工作面试专家承诺书</h1>
