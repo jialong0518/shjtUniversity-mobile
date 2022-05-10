@@ -13,6 +13,14 @@ export function login (data) {
   })
 }
 
+export function expertpasswordupd (data) {
+  return request({
+    url: '/expert/expertpasswordupd',
+    method: 'post',
+    data
+  })
+}
+
 export function expertcommitment (data) {
   return request({
     url: '/expert/commitment',

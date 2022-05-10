@@ -123,16 +123,51 @@
       </div>
     </van-overlay>
     </div>
+    <van-dialog 
+      v-model="pswShow" 
+      title="修改密码" 
+      show-cancel-button
+      confirmButtonText="修改密码"  
+      :showCancelButton="false"
+      confirmButtonColor="#000"
+      cancelButtonColor="red"
+      :before-close="onBeforeClose"
+      @confirm="pswFun"
+    >
+      <van-form @submit="onSubmit" ref="formData">
+        <van-field
+          v-model="oldpassword"
+          name="passwordOld"
+          label="原密码"
+          placeholder="原密码"
+          :rules="[{ required: true, message: '请填写原密码' }]"
+        />
+        <van-field
+          v-model="newpassword"
+          name="passwordNew"
+          label="新密码"
+          placeholder="新密码"
+          :rules="[{ required: true, message: '请填写新密码' }]"
+        />
+        <van-field
+          v-model="confirmpassword"
+          name="confirmpassword"
+          label="确认密码"
+          placeholder="确认密码"
+          :rules="[{ validator, message: '两次输入密码不一致' }]"
+        />
+      </van-form>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field, Overlay, RadioGroup, Radio } from 'vant'
+import { Button, Tabbar, TabbarItem, Swipe, SwipeItem,  Cell, CellGroup, List, Dialog, Field, Overlay, RadioGroup, Radio, Form } from 'vant'
 import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHelpers
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
 
-import { getmatchinfolist, expertconfirm, expertcommitment } from '@/api/user'
+import { getmatchinfolist, expertconfirm, expertcommitment, expertpasswordupd } from '@/api/user'
 // const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
@@ -153,7 +188,11 @@ export default {
       commitment:'',
       commitmentSHow: false,
       countDown: 1,
-      radio: false
+      radio: false,
+      pswShow: false,
+      confirmpassword: '',
+      newpassword: '',
+      oldpassword: '',
     }
   },
   components: {
@@ -169,12 +208,56 @@ export default {
     [Dialog.Component.name]: Dialog.Component,
     'van-field': Field,
     'van-overlay': Overlay,
-    'van-radio': Radio
+    'van-radio': Radio,
+    'van-form': Form
   },
   computed: {
     
   },
   methods: {
+    validator(val) {
+      if(this.newpassword !== val) {
+        return false
+      } else {
+        return true
+      }
+      // return /1\d{10}/.test(val);
+    },
+    onSubmit(values) {
+      expertpasswordupd({
+        "id": Number(sessionStorage.getItem("uid")),
+        "passwordOld": values.passwordOld,
+        "passwordNew": values.passwordNew,
+      }).then(r => {
+          console.log(r)
+          if(r.code !== 0) {
+            console.log(r.msg)
+            Dialog.alert({
+              title: '提示',
+              message: r.msg,
+            }).then(() => {
+              // on close
+            });
+            retrun
+          }
+          Dialog.alert({
+              title: '提示',
+              message: '修改成功',
+            }).then(() => {
+              location.reload()
+              // on close
+            });
+            this.pswShow = false;
+      })
+      .catch((r) => {
+        Dialog.alert({
+              title: '提示',
+              message: r,
+            }).then(() => {
+              // on close
+            });
+      });
+    },
     confirmRead(){
       expertcommitment({
         "id": Number(sessionStorage.getItem("uid")),
@@ -185,6 +268,9 @@ export default {
             retrun
           }
           this.commitmentSHow = false;
+          if(sessionStorage.getItem('ifupdpassword') === '0'){
+            this.pswShow = true;
+          }
       })
       .catch(() => {});
     },
@@ -218,6 +304,9 @@ export default {
       } else {
         return done(false)
       }
+    },
+    pswFun(){
+      this.$refs.formData.submit();
     },
     confirmT(){
       if(this.state === '1'){
@@ -286,22 +375,14 @@ export default {
   mounted(){
     console.log(sessionStorage.getItem("commitment"))
     this.commitment = sessionStorage.getItem("commitment")
-    this.commitmentSHow = this.commitment === '0' ? true : false;
-    // this.commitmentSHow =  true
-    // if(this.commitment === '0') {
-    //   let countDownFun=()=>{
-    //      let time =  setTimeout(()=>{
-    //       this.countDown = this.countDown - 1;
-    //       if(this.countDown !== 0) {
-    //         countDownFun(this.countDown)
-    //       } else {
-    //         clearTimeout(time)
-    //       }
-    //      },1000)
-    //   }
-    //      countDownFun()
-    // }
-    // this.getTableData()
+    if(this.commitment === '0') {
+      this.commitmentSHow = true;
+    } else {
+      this.commitmentSHow = false;
+      if(sessionStorage.getItem('ifupdpassword') === '0'){
+        this.pswShow = true;
+      }
+    }
   }
 }
 </script>
