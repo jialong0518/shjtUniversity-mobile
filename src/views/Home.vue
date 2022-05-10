@@ -2,6 +2,7 @@
   <div class="container">
     <h1>上海交通大学专家管理系统</h1>
     <div>
+      <div style="text-align: center;font-size: 20px;color: #07c160;" v-show="!commitmentSHow">（承诺书已确认）</div>
       <div style="margin:25px 0 15px;">
         <van-list
           v-model="loading"
@@ -21,8 +22,16 @@
               <van-cell title="面试时间段" :label="`${item.auditionBegin}--${item.auditionEnd}`" />
               <div class="operate">
                 <span>{{item.status}}</span>
-                <van-button v-show="item.status === '未确认'" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
-                <van-button v-show="item.status === '已确认'" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button>
+                <van-button style="margin: 10px 0;" v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
+                <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button>
+              </div>
+              <van-cell v-show="item.ifSignIn !== 4" title="签到时间段" :label="`${item.signInBegin}--${item.signInEnd}`" />
+              <div v-show="item.ifSignIn !== 4" class="operate">
+                <span>签到情况</span>
+                <van-button v-show="item.ifSignIn === 0" size="small" style="margin: 10px 0;" @click="showSignBut(item)" type="primary">点击签到</van-button>
+                <van-button v-show="item.ifSignIn === 1" size="small" style="margin: 10px 0;" :disabled="true" type="primary">已签到</van-button>
+                <van-button v-show="item.ifSignIn === 2" size="small" style="margin: 10px 0;" :disabled="true" type="primary">未开始</van-button>
+                <van-button v-show="item.ifSignIn === 3" size="small" style="margin: 10px 0;" :disabled="true" type="primary">已结束</van-button>
               </div>
             </van-cell-group>
           </div>
@@ -93,7 +102,7 @@
         </van-cell>
       </van-cell-group>
     </van-dialog>
-    <div style="position: relative;">
+    <div>
       <van-overlay :show="commitmentSHow"  :lock-scroll="false">
       <div style="display: flex;align-items: center;justify-content: center;height: 100%;" @click.stop>
         <div style="width: 90%;height: 90%;background-color: #fff;border-radius: 5px;display: flex;flex-direction: column;align-items: center;">
@@ -118,6 +127,22 @@
         </div>
         <div style="margin-bottom: 20px;margin-top: 10px;">
           <van-button type="info" @click="confirmRead" :disabled="!radio" >确 认</van-button>
+        </div>
+        </div>
+      </div>
+    </van-overlay>
+    </div>
+    <div>
+      <van-overlay :show="nbaShow"  :lock-scroll="false">
+      <div style="display: flex;align-items: center;justify-content: center;height: 100%;" @click.stop>
+        <div style="width: 90%;height: 90%;background-color: #fff;border-radius: 5px;display: flex;flex-direction: column;align-items: center;">
+        <h1 style="margin-top: 10px;margin-bottom: 10px;padding: 0 10px;">保密协议内容</h1>
+        <div class="noticeDiv" style="flex: 1;width: 90%;font-size: 16px;word-wrap: break-word;overflow: scroll;">
+          <div v-html="nba">
+          </div>
+        </div>
+        <div style="margin-bottom: 20px;margin-top: 10px;">
+          <van-button type="info" @click="signRead" >确认并签到</van-button>
         </div>
         </div>
       </div>
@@ -167,7 +192,7 @@ import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHel
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
 
-import { getmatchinfolist, expertconfirm, expertcommitment, expertpasswordupd } from '@/api/user'
+import { getmatchinfolist, expertconfirm, expertcommitment, expertpasswordupd, expertsignin } from '@/api/user'
 // const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
@@ -193,6 +218,9 @@ export default {
       confirmpassword: '',
       newpassword: '',
       oldpassword: '',
+      nba: '',
+      fid: '',
+      nbaShow: false,
     }
   },
   components: {
@@ -215,6 +243,27 @@ export default {
     
   },
   methods: {
+    signRead(){
+      expertsignin({
+        "fid": Number(this.fid),
+      }).then(r => {
+          console.log(r)
+          if(r.code !== 0) {
+            retrun
+          }
+          this.page = 0;
+          this.tableData = [];
+          this.getTableData();
+          this.nbaShow = false;
+      })
+      .catch(() => {});
+    },
+    showSignBut(data) {
+      this.nba = data.nda;
+      this.fid = data.fid;
+      this.nbaShow = true;
+      console.log(data);
+    },
     validator(val) {
       if(this.newpassword !== val) {
         return false

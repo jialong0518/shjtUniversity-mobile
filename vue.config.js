@@ -13,14 +13,18 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const cdn = {
   css: [],
   js: [
-    'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
-    'https://cdn.bootcss.com/vue-router/3.0.3/vue-router.min.js',
-    'https://cdn.bootcss.com/vuex/3.1.0/vuex.min.js',
-    'https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js',
-    'https://cdn.bootcss.com/js-cookie/2.2.1/js.cookie.min.js'
+    './vue.min.js',
+    './vue-router.min.js',
+    './vuex.min.js',
+    './axios.min.js',
+    './js.cookie.min.js'
   ]
 }
-
+// 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
+//     'https://cdn.bootcss.com/vue-router/3.0.3/vue-router.min.js',
+//     'https://cdn.bootcss.com/vuex/3.1.0/vuex.min.js',
+//     'https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js',
+//     'https://cdn.bootcss.com/js-cookie/2.2.1/js.cookie.min.js'
 const externals = {
   vue: 'Vue',
   'vue-router': 'VueRouter',
