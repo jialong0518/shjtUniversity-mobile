@@ -25,8 +25,9 @@
                 <van-button style="margin: 10px 0;" v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
                 <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button>
               </div>
-              <van-cell v-show="item.ifSignIn !== 4" title="签到时间段" :label="`${item.signInBegin}--${item.signInEnd}`" />
-              <div v-show="item.ifSignIn !== 4" class="operate">
+              <!-- item.ifSignIn !== 4 -->
+              <van-cell v-show="false" title="签到时间段" :label="`${item.signInBegin}--${item.signInEnd}`" />
+              <div v-show="false" class="operate">
                 <span>签到情况</span>
                 <van-button v-show="item.ifSignIn === 0" size="small" style="margin: 10px 0;" @click="showSignBut(item)" type="primary">点击签到</van-button>
                 <van-button v-show="item.ifSignIn === 1" size="small" style="margin: 10px 0;" :disabled="true" type="primary">已签到</van-button>
