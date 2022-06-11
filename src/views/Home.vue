@@ -23,8 +23,9 @@
               <div class="operate">
                 <span>{{item.status}}</span>
                 <van-button style="margin: 10px 0;" v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
-                <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button>
+                <!-- <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button> -->
               </div>
+              <van-cell v-show="item.status === '递补已确认'" title="该场次面试专家已报满，若有专家退出，您将优先作为面试专家，并有专人电话联系"  />
               <!-- item.ifSignIn !== 4 -->
               <van-cell v-show="false" title="签到时间段" :label="`${item.signInBegin}--${item.signInEnd}`" />
               <div v-show="false" class="operate">
@@ -337,6 +338,9 @@ export default {
           }
           this.tableData[this.dialogDataIndex].status = stste;
           this.confirmShow = false;
+          this.page = 0;
+          this.tableData = [];
+          this.getTableData();
           if(stste === '已确认') {
             Dialog.alert({
               title: '提示',
