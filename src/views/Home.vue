@@ -250,7 +250,7 @@ export default {
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
-            retrun
+            return
           }
           this.page = 0;
           this.tableData = [];
@@ -288,7 +288,7 @@ export default {
             }).then(() => {
               // on close
             });
-            retrun
+            return
           }
           Dialog.alert({
               title: '提示',
@@ -315,7 +315,7 @@ export default {
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
-            retrun
+            return
           }
           this.commitmentSHow = false;
           if(sessionStorage.getItem('ifupdpassword') === '0'){
@@ -333,7 +333,7 @@ export default {
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
-            retrun
+            return
           }
           this.tableData[this.dialogDataIndex].status = stste;
           this.confirmShow = false;
@@ -346,7 +346,16 @@ export default {
             });
           }
       })
-      .catch(() => {});
+      .catch((r) => {
+        let msg = r.toString()
+        msg = msg.replace('Error:', '')
+              Dialog.alert({
+              title: '提示',
+              message: msg,
+            }).then(() => {
+              this.confirmShow = false;
+            });
+      });
     },
     onBeforeClose(a, done){
       if(a === 'confirm') {
