@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-import { Field, Icon, Button } from 'vant'
+import { Field, Icon, Button, Toast  } from 'vant'
 import { mapActions } from 'vuex'
 import VerifyCodeBtn from '@/components/VerifyCodeBtn'
 import { login, goEmpower } from '@/api/user'
@@ -75,16 +75,19 @@ export default {
       login({username: this.phoneNumber,
         password: this.password}).then(r => {
           if(r.code === 1) {
+            console.log(r)
             return
           }
         sessionStorage.setItem("uid",r.data.uid)
+        sessionStorage.setItem("date",r.data.date)
         sessionStorage.setItem("phone",r.data.phone)
         sessionStorage.setItem("name",r.data.name)
         sessionStorage.setItem("commitment",r.data.commitment)
         sessionStorage.setItem("ifupdpassword",r.data.ifupdpassword)
         this.$router.push({ path:  '/' })
       })
-      .catch(() => {});
+      .catch((e) => {
+      });
       // this.$router.push({ path: '/article1' })
       // this.login(data)
       // sessionStorage.getItem("uid")
@@ -95,6 +98,7 @@ export default {
     // })
   },
   mounted() {
+    sessionStorage.clear()
     let url = window.location.href;
     let urlArr = [];
     // let url_ = 'https://mob.hexntc.com/jdexpert/admin/index.html?code=66a3e83a6bb347c1bc6b11d7a31b7ab5#/login?back=index.html'
@@ -111,10 +115,11 @@ export default {
             return
           }
         sessionStorage.setItem("uid",r.data.uid)
+        sessionStorage.setItem("date",r.data.date)
         sessionStorage.setItem("phone",r.data.phone)
         sessionStorage.setItem("name",r.data.name)
         sessionStorage.setItem("commitment",r.data.commitment)
-        sessionStorage.setItem("ifupdpassword",r.data.ifupdpassword)
+        sessionStorage.setItem("ifupdpassword",'1')
         this.$router.push({ path:  '/' })
       })
       .catch(() => {});
@@ -141,7 +146,8 @@ export default {
     [Field.name]: Field,
     [Icon.name]: Icon,
     [Button.name]: Button,
-    VerifyCodeBtn
+    VerifyCodeBtn,
+    Toast
   }
 }
 </script>

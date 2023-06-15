@@ -22,7 +22,7 @@
               <van-cell title="面试时间段" :label="`${item.auditionBegin}--${item.auditionEnd}`" />
               <div class="operate">
                 <span>{{item.status}}</span>
-                <van-button style="margin: 10px 0;" v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
+                <van-button style="margin: 10px 0;"  v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
                 <!-- <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button> -->
               </div>
               <van-cell v-show="item.status === '递补已确认'" title="该场次面试专家已报满，若有专家退出，您将优先作为面试专家，并有专人电话联系"  />
@@ -87,6 +87,10 @@
         <van-cell title="院/系" :value="dialogData.expertCollege" />
         <van-cell title="学科" :value="dialogData.expertSubject"  />
         <van-cell title="姓名" :value="dialogData.expertName"  />
+        <van-cell title="手机号" :value="dialogData.expertPhone"  />
+        <van-cell title="邮箱" :value="dialogData.expertEmail"  />
+        <van-cell title="银行卡号" v-if="dialogData.expertCollege&&dialogData.expertCollege === '医学院'" :value="dialogData.bankNumber"  />
+        <van-cell title="开户行" v-if="dialogData.expertCollege&&dialogData.expertCollege === '医学院'" :value="dialogData.bankName"  />
         <van-cell title="限定人数" :value="dialogData.countPlan"  />
         <van-cell title="面试时间段" :label="`${dialogData.auditionBegin}--${dialogData.auditionEnd}`" />
         <van-cell v-show="dialogData.status === '已确认'">
@@ -100,6 +104,47 @@
             type="textarea"
             placeholder="请输入原因"
           />
+          </template>
+        </van-cell>
+      </van-cell-group>
+    </van-dialog>
+    <van-dialog 
+      v-model="userInforShow" 
+      title="信息确认" 
+      show-cancel-button
+      confirmButtonText="确认并提交"  
+      confirmButtonColor="#000"
+      cancelButtonColor="red"
+      :showCancelButton="false"
+      :before-close="onBeforeClose"
+      @confirm="confirmUserInfor"
+    >
+      <van-cell-group style="margin-top: 30px;">
+        <van-cell title="年份" :value="userObj.year" />
+        <van-cell title="院/系" :value="userObj.expertCollege" />
+        <van-cell title="学科" :value="userObj.expertSubject"  />
+        <van-cell title="姓名" :value="userObj.expertName"  />
+        <van-cell title="职称" :value="userObj.expertTitle"  />
+        <van-cell title="专家工号" :value="userObj.expertNo"  />
+        <van-cell title="性别" :value="userObj.expertGender === 1 ? '男' : '女'"  />
+        <van-cell title="手机号">
+          <template slot="default">
+            <van-field error input-align="right" placeholder="请输入手机号" style="padding: 0;text-align: right;" v-model="userObj.expertPhone"/>
+          </template>
+        </van-cell>
+        <van-cell title="邮箱">
+          <template slot="default"> 
+            <van-field error input-align="right" placeholder="请输入邮箱" style="padding: 0;text-align: right;" v-model="userObj.expertEmail"/>
+          </template>
+        </van-cell>
+        <van-cell title="银行卡号" v-if="userObj.expertCollege&&userObj.expertCollege === '医学院'">
+          <template slot="default">
+            <van-field error input-align="right" placeholder="请输入银行卡号" style="padding: 0;text-align: right;" v-model="userObj.bankNumber"/>
+          </template>
+        </van-cell>
+        <van-cell title="开户行" v-if="userObj.expertCollege&&userObj.expertCollege === '医学院'">
+          <template slot="default">
+            <van-field error input-align="right" placeholder="请输入开户行名称" style="padding: 0;text-align: right;" v-model="userObj.bankName"/>
           </template>
         </van-cell>
       </van-cell-group>
@@ -194,7 +239,7 @@ import { mapActions, mapMutations, mapState } from 'vuex' // createNamespacedHel
 import FooterTabbar from 'components/FooterTabbar'
 import img from 'assets/webpack.png'
 
-import { getmatchinfolist, expertconfirm, expertcommitment, expertpasswordupd, expertsignin } from '@/api/user'
+import { getmatchinfolist, expertconfirm, expertcommitment, expertpasswordupd, expertsignin, expertreadyInfo, expertreadyInfoConfirm } from '@/api/user'
 // const { mapActions } = createNamespacedHelpers('test') // 可使用这种方式直接获得test模板
 export default {
   name: 'home',
@@ -223,6 +268,9 @@ export default {
       nba: '',
       fid: '',
       nbaShow: false,
+      uid: sessionStorage.getItem("uid"),
+      userObj: {},
+      userInforShow: false,
     }
   },
   components: {
@@ -321,6 +369,8 @@ export default {
           this.commitmentSHow = false;
           if(sessionStorage.getItem('ifupdpassword') === '0'){
             this.pswShow = true;
+          } else {
+            this.expertreadyInfoFun()
           }
       })
       .catch(() => {});
@@ -330,7 +380,11 @@ export default {
         "ids": [this.dialogData.id],
         "status": stste,
         "fid": this.dialogData.fid,
-        "memo": this.msg
+        "memo": this.msg,
+        "bankName": this.dialogData.bankName,
+        "bankNumber": this.dialogData.bankNumber,
+        "expertPhone": this.dialogData.expertPhone,
+        "expertEmail": this.dialogData.expertEmail,
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
@@ -434,18 +488,102 @@ export default {
     go(){
       this.$router.push({ path: '/article1' })
     },
+    expertreadyInfoFun(){
+      expertreadyInfo({
+        "id": Number(sessionStorage.getItem("uid")),
+      }).then(r => {
+          console.log(r)
+          if(r.code !== 0) {
+            return
+          }
+          if(r.data.ifConfirm === 0) {
+            this.userObj = r.data;
+            this.userInforShow = true;
+          }
+      })
+      .catch(() => {});
+    },
+    confirmUserInfor() {
+      if(this.userObj.expertCollege === '医学院') {
+        if(this.dialogData.bankNumber === '') {
+          Dialog.alert({
+              title: '提示',
+              message: '银行卡号不能为空',
+            }).then(() => {
+              // on close
+            });
+            return
+        }
+        if(this.userObj.bankName === '') {
+          Dialog.alert({
+              title: '提示',
+              message: '开户行不能为空',
+            }).then(() => {
+              // on close
+            });
+            return
+        }
+      }
+      if(this.userObj.expertPhone === '' || this.userObj.expertPhone.trim() === '') {
+          Dialog.alert({
+              title: '提示',
+              message: '手机号不能为空',
+            }).then(() => {
+              // on close
+            });
+            return
+        }
+        let myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+        console.log(this.userObj.expertPhone)
+        if (!myreg.test(this.userObj.expertPhone)) {
+            Dialog.alert({
+              title: '提示',
+              message: '手机号格式不正确',
+            }).then(() => {
+              // on close
+            });
+            return
+        }
+        if(this.userObj.expertEmail === '' || this.userObj.expertEmail.trim() === '') {
+          Dialog.alert({
+              title: '提示',
+              message: '邮箱不能为空',
+            }).then(() => {
+              // on close
+            });
+            return
+        }
+      expertreadyInfoConfirm({
+        "bankName": this.userObj.bankName,
+        "bankNumber": this.userObj.bankNumber,
+        "expertPhone": this.userObj.expertPhone,
+        "expertEmail": this.userObj.expertEmail,
+        id: Number(sessionStorage.getItem("uid")),
+      }).then(r => {
+          console.log(r)
+          if(r.code !== 0) {
+            return
+          }
+          this.page = 0;
+          this.getTableData();
+          this.userInforShow = false;
+      })
+      .catch(() => {});
+      
+    }
   },
   mounted(){
     console.log(sessionStorage.getItem("commitment"))
     this.commitment = sessionStorage.getItem("commitment")
+    if(sessionStorage.getItem('ifupdpassword') === '0'){
+      this.pswShow = true;
+      return
+    }
     if(this.commitment === '0') {
       this.commitmentSHow = true;
-    } else {
-      this.commitmentSHow = false;
-      if(sessionStorage.getItem('ifupdpassword') === '0'){
-        this.pswShow = true;
-      }
+      return
     }
+    this.expertreadyInfoFun()
   }
 }
 </script>

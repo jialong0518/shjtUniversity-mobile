@@ -13,37 +13,19 @@ router.beforeEach(async (to, from, next) => {
   // determine whether the user has logged in
   // const hasToken = getToken()
   const hasToken = sessionStorage.getItem("uid")
-  if (hasToken) {
-    if (to.path === '/login') {
-      // 已经登录，跳转到首页
-      next({ path: '/' })
-    } else {
-      next()
-      // // 获取用户信息
-      // const hasGetUserInfo = store.getters.userData && store.getters.userData.name
-      // if (hasGetUserInfo) {
-      //   next()
-      // } else {
-      //   try {
-      //     // get user info
-      //     await store.dispatch('user/getInfo')
-      //     next()
-      //   } catch (error) {
-      //     // 清除用户信息，退出登录，跳转登录页
-      //     store.commit('user/LOGOUT')
-      //     Notify.error(error || 'Has Error')
-      //     next(`/login?redirect=${to.path}`)
-      //   }
-      // }
-    }
-  } else {
-    /* has no token */
-    if (whiteList.indexOf(to.path) !== -1) {
-      // 白名单中，无需验证
-      next()
-    } else {
-      // other pages that do not have permission to access are redirected to the login page.
+  const date = sessionStorage.getItem("date")
+  if (!hasToken || !date) {
+    if(to.path.indexOf('login') === -1){
       next(`/login`)
+        // window.location.href= `${window.location.protocol}//${window.location.host}/#/login`
+        // window.location.href= `https://expert.sjtu.edu.cn/jdexpert/admin/index.html#/login`
+        // window.location.href= `https://mob.hexntc.com/jdexpert/admin/index.html#/login`
+        
+        // next()
+    }else{
+        next()
     }
+  }else{
+    next()
   }
 })

@@ -12,6 +12,21 @@ export function login (data) {
     // data: JSON.stringify(data)
   })
 }
+export function expertreadyInfo (data) {
+  return request({
+    url: '/expert/expertreadyInfo',
+    method: 'post',
+    data
+  })
+}
+
+export function expertreadyInfoConfirm (data) {
+  return request({
+    url: '/expert/expertreadyInfoConfirm',
+    method: 'post',
+    data
+  })
+}
 
 export function expertsignin (data) {
   return request({

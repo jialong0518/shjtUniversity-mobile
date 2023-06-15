@@ -62,6 +62,10 @@ service.interceptors.response.use(
           // })
         })
       }
+      Toast.fail({
+        message: res.msg,
+        duration: 1.5 * 1000
+      })
       return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return res
