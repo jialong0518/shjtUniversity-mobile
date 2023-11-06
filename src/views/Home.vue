@@ -385,6 +385,7 @@ export default {
         "bankNumber": this.dialogData.bankNumber,
         "expertPhone": this.dialogData.expertPhone,
         "expertEmail": this.dialogData.expertEmail,
+        "uuid": sessionStorage.getItem("uuid"),
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
@@ -457,7 +458,8 @@ export default {
         "auditionRoundId": 1,
         "status": "",
         "page": this.page,
-        "pageSize": 10
+        "pageSize": 10,
+        "uuid": sessionStorage.getItem("uuid"),
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
@@ -491,6 +493,7 @@ export default {
     expertreadyInfoFun(){
       expertreadyInfo({
         "id": Number(sessionStorage.getItem("uid")),
+        "uuid": sessionStorage.getItem("uuid"),
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {
@@ -559,6 +562,7 @@ export default {
         "expertPhone": this.userObj.expertPhone,
         "expertEmail": this.userObj.expertEmail,
         id: Number(sessionStorage.getItem("uid")),
+        "uuid": sessionStorage.getItem("uuid"),
       }).then(r => {
           console.log(r)
           if(r.code !== 0) {

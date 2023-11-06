@@ -79,6 +79,7 @@ export default {
             return
           }
         sessionStorage.setItem("uid",r.data.uid)
+        sessionStorage.setItem("uuid",r.data.uuid)
         sessionStorage.setItem("date",r.data.date)
         sessionStorage.setItem("phone",r.data.phone)
         sessionStorage.setItem("name",r.data.name)
