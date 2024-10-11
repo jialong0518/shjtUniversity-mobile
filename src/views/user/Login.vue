@@ -118,6 +118,7 @@ export default {
         sessionStorage.setItem("uid",r.data.uid)
         sessionStorage.setItem("date",r.data.date)
         sessionStorage.setItem("phone",r.data.phone)
+        sessionStorage.setItem("uuid",r.data.uuid)
         sessionStorage.setItem("name",r.data.name)
         sessionStorage.setItem("commitment",r.data.commitment)
         sessionStorage.setItem("ifupdpassword",'1')
