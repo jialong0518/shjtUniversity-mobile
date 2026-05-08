@@ -501,6 +501,10 @@ export default {
           }
           if(r.data.ifConfirm === 0) {
             this.userObj = r.data;
+            // 在数据源头去掉手机号中的所有空格
+            if(this.userObj.expertPhone) {
+              this.userObj.expertPhone = this.userObj.expertPhone.replace(/\s/g, '');
+            }
             this.userInforShow = true;
           }
       })
@@ -536,7 +540,7 @@ export default {
             });
             return
         }
-        let myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+        let myreg = /^[1][3456789][0-9]{9}$/;
         console.log(this.userObj.expertPhone)
         if (!myreg.test(this.userObj.expertPhone)) {
             Dialog.alert({
