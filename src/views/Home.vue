@@ -22,7 +22,7 @@
               <van-cell title="面试时间段" :label="`${item.auditionBegin}--${item.auditionEnd}`" />
               <div class="operate">
                 <span>{{item.status}}</span>
-                <van-button style="margin: 10px 0;"  v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击确认</van-button>
+                <van-button style="margin: 10px 0;"  v-show="item.status === '未确认'" size="small" @click="confirmBut(item, '1', index)" type="info">点击查看</van-button>
                 <!-- <van-button style="margin: 10px 0;" v-show="item.status === '已确认'" size="small" @click="confirmBut(item, '0', index)" type="info">申请取消</van-button> -->
               </div>
               <van-cell v-show="item.status === '递补已确认'" title="该场次面试专家已报满，若有专家退出，您将优先作为面试专家，并有专人电话联系"  />
@@ -72,7 +72,7 @@
       v-model="confirmShow" 
       :title="state=== '1' ?'面试信息确认':'申请取消'" 
       show-cancel-button
-      :confirmButtonText="state=== '1' ? '确定' : '提交'"  
+      :confirmButtonText="state=== '1' ? '确定参加' : '提交'"  
       :cancelButtonText="state=== '1' ? '拒绝' : '关闭'"   
       confirmButtonColor="#000"
       cancelButtonColor="red"
